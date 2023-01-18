@@ -1,76 +1,42 @@
-//your code here
-var imageDiv = document.getElementById("image")
-var fullname = document.getElementById("fullName")
-var ageBtn = document.getElementById("ageBtn")
-var phoneBtn = document.getElementById("phoneBtn")
-var emailBtn = document.getElementById("emailBtn")
-var newUser = document.getElementById("getUser")
-var heading = document.getElementsByTagName("h")[0]
-var update = document.getElementById("update")
+fetch('https://randomuser.me/api/')
+  .then(response => response.json())
+  .then(data => {
+    // Extract necessary information from data
+    const fullName = `${data.results[0].name.first} ${data.results[0].name.last}`;
+    const imageURL = data.results[0].picture.large;
+    const age = data.results[0].dob.age;
+    const email = data.results[0].email;
+    const phone = data.results[0].phone;
 
-var apiLink = "https://randomuser.me/api/"
+    // Display full name and image on page
+    document.getElementById('name').innerHTML = fullName;
+    document.getElementById('image').src = imageURL;
 
-var userDATA;
+    // Add event listeners to buttons
+    document.getElementById('ageBtn').addEventListener('click', function() {
+      document.getElementById('additionalInfo').innerHTML = age;
+    });
+    document.getElementById('emailBtn').addEventListener('click', function() {
+      document.getElementById('additionalInfo').innerHTML = email;
+    });
+    document.getElementById('phoneBtn').addEventListener('click', function() {
+      document.getElementById('additionalInfo').innerHTML = phone;
+    });
 
-function fetchingData() {
-    //sending fetch request to server && this variable is acting as a promise
-    var apiData = fetch(apiLink)
-    //convert and collect data
-    apiData.then(data => data.json())
+    // Add event listener to "Get New User" button
+    document.getElementById('getUser').addEventListener('click', function() {
+      fetch('https://randomuser.me/api/')
+        .then(response => response.json())
         .then(data => {
-            userDATA = data
-            insert(userDATA)
-        })
-        .catch(error => console.error("Unable to fetch data " + error))
-}
+          // Extract necessary information from new data and update page
+          const newFullName = `${data.results[0].name.first} ${data.results[0].name.last}`;
+          const newImageURL = data.results[0].picture.large;
+          const newAge = data.results[0].dob.age;
+          const newEmail = data.results[0].email;
+          const newPhone = data.results[0].phone;
 
-// fetchingData()
-document.addEventListener('DOMContentLoaded',fetchingData)
-
-function insert(dataOfuser) {
-
-    var image = document.createElement("img")
-    const source = dataOfuser.results; // this is an array
-    const source1 = source[0].picture.large // source[0] is the first element of an array, first element is itself an object
-    image.src = source1
-    imageDiv.append(image)
-    const readFirstName = source[0].name.first
-    const readLastName = source[0].name.last
-    fullname.textContent = readFirstName + " " + readLastName
-}
-
-
-
-function showAge(){
-    const source = userDATA.results;
-    const readAge = source[0].dob.age
-    heading.textContent = "Additional Information"
-    update.textContent = readAge
-}
-
-ageBtn.addEventListener('click', showAge)
-
-
-function showEmail(){
-    const source = userDATA.results[0].email;
-    heading.textContent = "Additional Information"
-    update.textContent = source
-}
-
-emailBtn.addEventListener('click', showEmail)
-
-
-function showPhone(){
-    const source = userDATA.results[0];
-    const readAge = source.phone
-    heading.textContent = "Additional Information"
-    update.textContent = readAge
-}
-
-phoneBtn.addEventListener('click', showPhone)
-
-
-
-newUser.addEventListener('click', function(){
-    location.reload()
-})
+          document.getElementById('name').innerHTML = newFullName;
+          document.getElementById('image').src = newImageURL;
+        });
+    });
+  });
